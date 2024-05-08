@@ -4,7 +4,7 @@ import os
 from flask import Blueprint, request, jsonify, send_from_directory
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from werkzeug.utils import secure_filename
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash  # Add import
 from models import db, User
 from config import Config
 import datetime
@@ -73,9 +73,7 @@ def decode_token_route():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-    
-
-@auth_bp.route('/login', methods=['POST'])
+@auth_bp.route('/login', methods=['POST'])  # Add login route
 def login():
     try:
         data = request.json

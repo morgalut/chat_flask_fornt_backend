@@ -2,26 +2,23 @@
 from flask_jwt_extended import JWTManager
 from flask import Flask
 from flask_cors import CORS
-from auth import auth_bp
-from models import db, User  # Import the User model
+from auth import auth_bp, profile_bp  # Import the profile_bp
+from models import db, User
 from config import Config
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
-jwt = JWTManager(app)  # Initialize JWTManageR
+jwt = JWTManager(app)
 
-# Enable CORS for all routes
 CORS(app)
 
-# Register Blueprints
+# Register both auth_bp and profile_bp Blueprints
 app.register_blueprint(auth_bp)
+app.register_blueprint(profile_bp)
 
-# Initialize database
 db.init_app(app)
 
-# Create tables based on the defined models
-from models import db
 with app.app_context():
     db.create_all()
 

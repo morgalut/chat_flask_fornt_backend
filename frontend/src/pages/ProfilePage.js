@@ -64,6 +64,7 @@ const ProfilePage = () => {
       (
         <p>Loading...</p>
       )}
+      
     </div>
   );
 };
