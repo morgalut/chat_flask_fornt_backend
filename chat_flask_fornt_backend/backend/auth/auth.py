@@ -1,4 +1,7 @@
 # backend/auth/auth.py
+from datetime import date
+import io
+from bson import ObjectId
 from flask import Blueprint, request, jsonify, current_app
 import requests
 from models.models import User
@@ -6,7 +9,7 @@ from models.extensions import mongo
 from enums import Status
 import bcrypt
 from flask_jwt_extended import create_access_token
-from models.config import Config
+from config import Config
 import gridfs
 import os
 from werkzeug.utils import secure_filename
@@ -14,19 +17,15 @@ from werkzeug.utils import secure_filename
 auth_bp = Blueprint('auth', __name__)
 
 class AuthService:
-    def register_user(self, username, email, password, profile_picture):
-        profile_picture_id = None
-        if profile_picture:
-            fs = gridfs.GridFS(mongo.db)
-            profile_picture.seek(0)
-            profile_picture_id = fs.put(profile_picture.read(), filename=secure_filename(profile_picture.filename))
-            local_file_path = os.path.join(Config.UPLOAD_FOLDER, f"{profile_picture_id}.png")
-            with open(local_file_path, 'wb') as local_file:
-                local_file.write(fs.get(profile_picture_id).read())
+    def register_user(self, username, email, password, profile_picture=None):
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-        user = User(username=username, email=email, password=hashed_password, status=Status.PENDING, profile_picture_id=profile_picture_id)
+        user = User(username=username, email=email, password=hashed_password, status=Status.PENDING)
+        
+        # Save user to the database
         user.save()
+
         return user
+
 
     def authenticate_user(self, username, password):
         user = User.find_by_username(username)

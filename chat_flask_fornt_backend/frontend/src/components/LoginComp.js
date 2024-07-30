@@ -8,25 +8,46 @@ const LoginComp = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('token') ? true : false);
     const [chatgptMessage, setChatgptMessage] = useState(''); // New state for ChatGPT message
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        try {
-            const response = await axios.post('http://localhost:5000/api/login', {
-                username: username,
-                password: password
-            }, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            console.log('Login successful:', response.data);
-            localStorage.setItem('token', response.data.token);
-            setIsLoggedIn(true);
-            setChatgptMessage(response.data.chatgpt_message); // Set ChatGPT message
-        } catch (error) {
-            console.error('Error logging in:', error);
+// In your LoginComp.js
+const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+        const response = await axios.post('http://localhost:5000/api/login', {
+            username: username,
+            password: password
+        }, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log('Login successful:', response.data);
+        localStorage.setItem('token', response.data.token);
+        setIsLoggedIn(true);
+        setChatgptMessage(response.data.chatgpt_message); // Set ChatGPT message
+    } catch (error) {
+        console.error('Error logging in:', error);
+        if (error.code === 'ERR_NETWORK') {
+            // Fallback to backup server
+            try {
+                const response = await axios.post('http://localhost:5001/api/login', {
+                    username: username,
+                    password: password
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                console.log('Login successful on backup server:', response.data);
+                localStorage.setItem('token', response.data.token);
+                setIsLoggedIn(true);
+                setChatgptMessage(response.data.chatgpt_message); // Set ChatGPT message
+            } catch (backupError) {
+                console.error('Error logging in on backup server:', backupError);
+            }
         }
-    };
+    }
+};
+
 
     if (isLoggedIn) {
         return <Navigate to="/profile" />;

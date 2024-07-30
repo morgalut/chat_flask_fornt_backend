@@ -2,10 +2,10 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './Navbar';
-import RegisterPage from './pages/RegisterPage';
 import Home from './pages/Home';
 import LoginComp from './components/LoginComp';
 import ProfileComp from './components/ProfileComp';
+import RegisterComp from './components/RegisterComp';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -22,7 +22,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<LoginComp setIsLoggedIn={setIsLoggedIn} />} />
-          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/register" element={<RegisterComp />} />
           <Route path="/profile" element={<ProfileComp />} />
         </Routes>
       </div>

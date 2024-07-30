@@ -1,10 +1,10 @@
 # backend/auth/profile.py
-from flask import Blueprint, jsonify, current_app, send_from_directory, request
+from config import Config
+from flask import Blueprint, jsonify, current_app, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
+import requests
 from models.extensions import mongo
 from bson import ObjectId
-import os
-import requests
 
 profile_bp = Blueprint('profile', __name__)
 
@@ -24,10 +24,6 @@ def get_profile():
             current_app.logger.error(f"User not found: {current_user}")
             return jsonify({'error': 'User not found'}), 404
 
-        profile_picture_url = None
-        if user.get('profile_picture_id'):
-            profile_picture_url = f"/uploads/{user['profile_picture_id']}.png"
-
         # Fetch ChatGPT message
         chatgpt_response = requests.post('http://localhost:5000/chatgpt/get_response', json={'name': user['username']}).json()
 
@@ -35,7 +31,6 @@ def get_profile():
             'user_id': str(user['_id']),
             'username': user['username'],
             'email': user['email'],
-            'profilePictureUrl': profile_picture_url,
             'status': user['status'],
             'chatgpt_message': chatgpt_response.get('message', f"Failed to fetch message, status code: {chatgpt_response.get('status_code', 'unknown')}")
         })
