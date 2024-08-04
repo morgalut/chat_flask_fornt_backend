@@ -61,3 +61,28 @@ Our main server provides the following API endpoints for interacting with ChatGP
   {
     "message": "Your message here"
   }
+
+
+
+## Backup Server
+
+In case our main server crashes, we have a Node.js server as a backup to ensure continuous service.
+
+### Node.js Backup Server Features
+
+- **Automatic Failover:** Automatically redirects to the backup server if the main server is down.
+- **Seamless Experience:** Provides the same services as the main server with minimal interruption.
+
+## Contributing
+
+We welcome contributions from the community. If you'd like to contribute, please follow these steps:
+
+1. Fork the repository.
+2. Create a new branch.
+3. Make your changes.
+4. Submit a pull request.
+
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for more details.
+
