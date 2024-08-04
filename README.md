@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Welcome to **Stock Bat**, your go-to platform for accessing paid services for free. This README will guide you through the main features of our server, the process of registration and entry, API endpoints for ChatGPT interactions, and our backup Node.js server.
+Welcome to **ChatGPT**, your go-to platform for accessing paid services for free. This README will guide you through the main features of our server, the process of registration and entry, API endpoints for ChatGPT interactions, and our backup Node.js server.
 
 ## Table of Contents
 1. [Getting Started](#getting-started)
