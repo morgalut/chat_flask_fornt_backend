@@ -1,4 +1,4 @@
-# Stock Bat README
+# ChatGPT README
 
 ## Introduction
 
