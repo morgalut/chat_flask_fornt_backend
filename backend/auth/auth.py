@@ -47,7 +47,7 @@ def register():
     
     try:
         current_app.logger.info(f"Sending request to ChatGPT with name: {user.username}")
-        chatgpt_response = requests.post('http://localhost:5000/chatgpt/get_response', json={'name': user.username})
+        chatgpt_response = requests.post('http://localhost:5001/chatgpt/get_response', json={'name': user.username})
         chatgpt_response.raise_for_status()
         current_app.logger.info(f"ChatGPT response status code: {chatgpt_response.status_code}")
         chatgpt_message = chatgpt_response.json().get('message', f"Failed to fetch message, status code: {chatgpt_response.status_code}")

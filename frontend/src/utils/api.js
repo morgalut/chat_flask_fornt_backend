@@ -14,7 +14,7 @@ const fetchChatGPTMessage = async (name) => {
             return response.data.message;
         } catch (backupError) {
             console.error('Error with backup server:', backupError);
-            throw new Error('Failed to fetch message from both servers');
+            throw new Error('Failed to fetch ChatGPT response from both servers');
         }
     }
 };

@@ -23,19 +23,15 @@ const RegisterComp = () => {
     formData.append('password', password);
 
     try {
-      const res = await axios.post('http://localhost:5000/api/register', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      const res = await axios.post('http://localhost:5000/api/register', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       setChatgptMessage(res.data.chatgpt_message);
     } catch (err) {
-      console.error('Error with Flask API, trying backup server:', err.response?.data || err.message);
+      console.error('Error with Flask API, trying backup server:', err);
       try {
-        const backupRes = await axios.post('http://localhost:5001/api/auth/register', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
+        const backupRes = await axios.post('http://localhost:5001/api/register', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
         setChatgptMessage(backupRes.data.chatgpt_message);
       } catch (backupError) {
-        console.error('Error with backup server:', backupError.response?.data || backupError.message);
+        console.error('Error with backup server:', backupError);
       }
     }
   };

@@ -28,9 +28,11 @@ class NodeJsHealthChecker:
                     print(f'Failed to notify Node.js server: {response.status_code} - {response.text}')
             except requests.RequestException as e:
                 print(f'Error notifying Node.js server: {e}')
+                # Call backup server start logic
                 self.send_dead_message()
                 self.start_node_server()
             time.sleep(self.check_interval)
+
 
     def send_dead_message(self):
         try:

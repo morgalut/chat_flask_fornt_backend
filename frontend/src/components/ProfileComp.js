@@ -13,51 +13,37 @@ const ProfileComp = () => {
     navigate('/login');
   };
 
- // In your ProfileComp.js
-useEffect(() => {
-  const fetchProfileData = async () => {
+  useEffect(() => {
+    const fetchProfileData = async () => {
       try {
-          const token = localStorage.getItem('token');
-          console.log('Retrieved Token:', token);
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('Token not found');
 
-          if (!token) {
-              throw new Error('Token not found');
-          }
+        const response = await axios.get('http://localhost:5000/api/profile', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-          const response = await axios.get('http://localhost:5000/api/profile', {
-              headers: {
-                  Authorization: `Bearer ${token}`,
-              },
-          });
-
-          setUserProfile(response.data);
-          setChatgptMessage(response.data.chatgpt_message);
+        setUserProfile(response.data);
+        setChatgptMessage(response.data.chatgpt_message);
       } catch (error) {
-          console.error('Error fetching profile data:', error.response?.data || error.message);
-          if (error.response) {
-              setError(error.response.data.error || 'Failed to fetch profile data');
-          } else {
-              setError('Failed to fetch profile data from Flask API, trying backup server...');
-              try {
-                  const token = localStorage.getItem('token');
-                  const backupResponse = await axios.get('http://localhost:5001/api/profile', {
-                      headers: {
-                          Authorization: `Bearer ${token}`,
-                      },
-                  });
-                  setUserProfile(backupResponse.data);
-                  setChatgptMessage(backupResponse.data.chatgpt_message);
-              } catch (backupError) {
-                  console.error('Error fetching profile data from backup server:', backupError.response?.data || backupError.message);
-                  setError('Failed to fetch profile data from both servers');
-              }
-          }
+        console.error('Error fetching profile data:', error);
+        setError('Failed to fetch profile data from Flask API, trying backup server...');
+        try {
+          const token = localStorage.getItem('token');
+          const backupResponse = await axios.get('http://localhost:5001/api/profile', {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setUserProfile(backupResponse.data);
+          setChatgptMessage(backupResponse.data.chatgpt_message);
+        } catch (backupError) {
+          console.error('Error fetching profile data from backup server:', backupError);
+          setError('Failed to fetch profile data from both servers');
+        }
       }
-  };
+    };
 
-  fetchProfileData();
-}, []);
-
+    fetchProfileData();
+  }, []);
 
   return (
     <div>
