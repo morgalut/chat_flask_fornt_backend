@@ -6,7 +6,7 @@ chatgpt_bp = Blueprint('chatgpt', __name__)
 
 def fetch_message_from_chatgpt(name):
     headers = {
-        'Authorization': f'Bearer {chatgpt_config.api_key}',  # Use api_key from config
+        'Authorization': f'Bearer {chatgpt_config.api_key}',
         'Content-Type': 'application/json'
     }
     payload = {
@@ -16,6 +16,9 @@ def fetch_message_from_chatgpt(name):
         ],
         "max_tokens": 50
     }
+
+    if not chatgpt_config.api_url:
+        return 'API URL is not configured.'
 
     try:
         response = requests.post(chatgpt_config.api_url, headers=headers, json=payload)
@@ -28,6 +31,7 @@ def fetch_message_from_chatgpt(name):
             return f'Failed to fetch message, status code: {response.status_code}'
     except Exception as e:
         return f'Error occurred: {e}'
+
 
 
 @chatgpt_bp.route('/get_response', methods=['POST'])
