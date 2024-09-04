@@ -11,6 +11,6 @@ class ChatGPTConfig:
 
 
 # Load the config using the absolute path to the .env file
-config_file_path = 'C:\\Users\\user\\Desktop\\chat_flask_fornt_backend\\backend\\ChatGPT\\.env'
+config_file_path = 'C:\\Users\\Mor\\Desktop\\chat_flask_fornt_backend\\backend\\ChatGPT\\.env'
 chatgpt_config = ChatGPTConfig(config_file_path)
 

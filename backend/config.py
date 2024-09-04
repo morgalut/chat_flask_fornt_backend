@@ -1,4 +1,3 @@
-# C:\Users\Mor\Desktop\test2\chat_flask_fornt_backend\backend\config.py
 import os
 
 class Config:
@@ -13,4 +12,4 @@ class Config:
     # File upload configuration
 
     # MongoDB configuration
-    MONGO_URI = 'mongodb://localhost:27017/User'  # Make sure this URI is correct
+    MONGO_URI = 'mongodb://localhost:27017/Mor'  # Make sure this URI is correct

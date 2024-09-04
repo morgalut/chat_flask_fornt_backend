@@ -3,7 +3,6 @@ import bcrypt
 from models.extensions import mongo
 from enums import Status
 import logging
-import gridfs
 
 class User:
     def __init__(self, username, email, password, status='pending', user_id=None):
@@ -16,19 +15,18 @@ class User:
     def save(self):
         db = mongo.db
         logging.info(f'Saving user: {self.username}, {self.email}, {self.status}')
-        result = db.User.insert_one({
+        result = db.users.insert_one({  # Changed 'User' to 'users'
             'username': self.username,
             'email': self.email,
             'password': self.password,
             'status': self.status.value if isinstance(self.status, Status) else self.status,
-            
         })
         self.id = str(result.inserted_id)
 
     @staticmethod
     def find_by_username(username):
         db = mongo.db
-        user_data = db.User.find_one({'username': username})
+        user_data = db.users.find_one({'username': username})  # Changed 'User' to 'users'
         if user_data:
             return User(
                 username=user_data['username'],

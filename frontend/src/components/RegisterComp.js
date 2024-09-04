@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+const API_URL = 'http://localhost:5000/api/register';
+const BACKUP_API_URL = 'http://localhost:5001/auth/register';
+
 const RegisterComp = () => {
   const [formData, setFormData] = useState({
     username: '',
@@ -8,6 +11,7 @@ const RegisterComp = () => {
     password: '',
   });
   const [chatgptMessage, setChatgptMessage] = useState('');
+  const [error, setError] = useState('');
 
   const { username, email, password } = formData;
 
@@ -17,21 +21,22 @@ const RegisterComp = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append('username', username);
-    formData.append('email', email);
-    formData.append('password', password);
 
     try {
-      const res = await axios.post('http://localhost:5000/api/register', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      const res = await axios.post(API_URL, { username, email, password }, { headers: { 'Content-Type': 'application/json' } });
       setChatgptMessage(res.data.chatgpt_message);
+      setError('');
     } catch (err) {
-      console.error('Error with Flask API, trying backup server:', err);
+      console.error('Error with Flask API:', err.message);
+
       try {
-        const backupRes = await axios.post('http://localhost:5001/api/register', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+        const backupRes = await axios.post(BACKUP_API_URL, { username, email, password }, { headers: { 'Content-Type': 'application/json' } });
         setChatgptMessage(backupRes.data.chatgpt_message);
+        setError('');
       } catch (backupError) {
-        console.error('Error with backup server:', backupError);
+        console.error('Error with backup server:', backupError.message);
+        setError('Failed to register. Please try again later.');
+        setChatgptMessage('');
       }
     }
   };
@@ -39,14 +44,14 @@ const RegisterComp = () => {
   return (
     <div>
       <h2>Register</h2>
-      <form onSubmit={e => onSubmit(e)} encType="multipart/form-data">
+      <form onSubmit={onSubmit}>
         <div>
           <input
             type="text"
             placeholder="Username"
             name="username"
             value={username}
-            onChange={e => onChange(e)}
+            onChange={onChange}
             required
           />
         </div>
@@ -56,7 +61,7 @@ const RegisterComp = () => {
             placeholder="Email Address"
             name="email"
             value={email}
-            onChange={e => onChange(e)}
+            onChange={onChange}
             required
           />
         </div>
@@ -66,7 +71,7 @@ const RegisterComp = () => {
             placeholder="Password"
             name="password"
             value={password}
-            onChange={e => onChange(e)}
+            onChange={onChange}
             minLength="6"
             required
           />
@@ -74,6 +79,7 @@ const RegisterComp = () => {
         <input type="submit" value="Register" />
       </form>
       {chatgptMessage && <p>{chatgptMessage}</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
 };

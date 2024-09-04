@@ -1,4 +1,3 @@
-# backend/auth/profile.py
 from config import Config
 from flask import Blueprint, jsonify, current_app, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -19,7 +18,7 @@ def get_profile():
         return jsonify({'error': 'Invalid user ID format'}), 400
 
     try:
-        user = mongo.db.User.find_one({'_id': ObjectId(current_user)})
+        user = mongo.db.users.find_one({'_id': ObjectId(current_user)})  # Changed 'User' to 'users'
         if not user:
             current_app.logger.error(f"User not found: {current_user}")
             return jsonify({'error': 'User not found'}), 404

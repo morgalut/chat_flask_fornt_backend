@@ -1,6 +1,10 @@
+// ProfileComp.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+
+const API_URL = 'http://localhost:5000'; // Flask API
+const BACKUP_API_URL = 'http://localhost:5001'; // Node.js backup API
 
 const ProfileComp = () => {
   const [userProfile, setUserProfile] = useState(null);
@@ -15,11 +19,15 @@ const ProfileComp = () => {
 
   useEffect(() => {
     const fetchProfileData = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) throw new Error('Token not found');
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Token not found');
+        return;
+      }
 
-        const response = await axios.get('http://localhost:5000/api/profile', {
+      try {
+        // Fetch from Flask API
+        const response = await axios.get(`${API_URL}/api/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -28,9 +36,10 @@ const ProfileComp = () => {
       } catch (error) {
         console.error('Error fetching profile data:', error);
         setError('Failed to fetch profile data from Flask API, trying backup server...');
+
         try {
-          const token = localStorage.getItem('token');
-          const backupResponse = await axios.get('http://localhost:5001/api/profile', {
+          // Fetch from Node.js backup API
+          const backupResponse = await axios.get(`${BACKUP_API_URL}/profile/profile`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           setUserProfile(backupResponse.data);
@@ -64,4 +73,4 @@ const ProfileComp = () => {
   );
 };
 
-export default ProfileComp;
+export default ProfileComp; 
