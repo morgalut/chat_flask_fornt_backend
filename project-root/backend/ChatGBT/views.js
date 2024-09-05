@@ -30,7 +30,6 @@ async function fetchMessageFromChatGPT(name) {
   }
 }
 
-// Route to get the response
 router.post('/get_response', async (req, res) => {
   const { name } = req.body;
 
@@ -44,5 +43,6 @@ router.post('/get_response', async (req, res) => {
     return res.status(400).json({ error: 'Name not provided' });
   }
 });
+
 
 module.exports = router;

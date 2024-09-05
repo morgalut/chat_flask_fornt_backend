@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv').config();
-
+const chatgptRoutes = require('./ChatGBT/views');
 const authRoutes = require('./auth/auth');
 const profileRoutes = require('./auth/profile');
 
@@ -14,10 +14,11 @@ const port = process.env.PORT || 5001;
 // Middleware
 app.use(express.json());
 app.use(cors());
+app.use(bodyParser.json()); 
 
 app.use('/auth', authRoutes);
 app.use('/profile', profileRoutes);
-
+app.use('/chatgpt', chatgptRoutes);
 // Health check endpoint
 app.post('/notify_alive', (req, res) => {
   const message = req.body.message;
@@ -31,10 +32,12 @@ app.post('/api/register', (req, res) => {
   res.status(200).json({ message: 'Registration handled by Node.js server' });
 });
 
-// Ensure correct endpoint for ChatGPT requests
 app.post('/chatgpt/get_response', (req, res) => {
-  res.status(200).json({ message: 'Handled by Node.js server' });
+  console.log(req.body); // Should output the parsed JSON object
+  res.send('Handled by Node.js server');
 });
+
+
 
 const connectDB = async () => {
   try {
