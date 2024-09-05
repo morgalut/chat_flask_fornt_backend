@@ -1,101 +1,114 @@
-### This is what I understood to be done in the project
 
-# Chat Flask Frontend Backend Project
+## Features
 
-This project integrates a Flask backend for handling user authentication and interactions with OpenAI's ChatGPT. Below is a comprehensive explanation of the codebase, including the purpose and functionality of each file, as well as instructions for testing the backend.
-
-
-## Table of Contents
-
-  - [Backend Files](#backend-files)
-- [Installation](#installation)
-- [Environment Variables](#environment-variables)
-- [Running the Application](#running-the-application)
-- [Detailed Explanation of `requirements.txt`](#detailed-explanation-of-requirementstxt)
-- [Contributing](#contributing)
-- [License](#license)
-
-### Backend Files
-
-#### `backend/__init__.py`
-- Initializes the Flask application, setting up configurations and initializing extensions.
-
-#### `backend/run.py`
-- Entry point of the Flask application. Creates and configures the Flask app, initializes MongoDB and JWT, sets up CORS, registers blueprints, and runs the application.
-
-#### `backend/enums.py`
-- Defines enumerations for user roles and statuses.
-
-#### `backend/models/__init__.py`
-- Initializes the models module.
-
-#### `backend/models/models.py`
-- Defines the `User` model for interacting with MongoDB. Handles user data, including saving and finding users, and uses bcrypt for password hashing and gridfs for profile picture storage.
-
-#### `backend/models/extensions.py`
-- Initializes the PyMongo extension for MongoDB interactions.
-
-#### `backend/models/config.py`
-- Contains configuration settings for the Flask application, JWT, file uploads, and MongoDB.
-
-#### `backend/ChatGPT/__init__.py`
-- Initializes the ChatGPT module.
-
-#### `backend/ChatGPT/views.py`
-- Handles interactions with OpenAI's ChatGPT API. Defines a blueprint for ChatGPT endpoints and fetches messages from ChatGPT using a POST request.
-
-#### `backend/ChatGPT/config.py`
-- Loads configuration for ChatGPT using environment variables.
-
-#### `backend/auth/__init__.py`
-- Initializes the authentication module.
-
-#### `backend/auth/auth.py`
-- Handles user registration and authentication. Defines a blueprint for authentication endpoints, registers and authenticates users, and interacts with ChatGPT to fetch messages during registration and login.
-
-#### `backend/auth/profile.py`
-- Manages user profile details and interactions.
+- **Flask Application**: Handles user authentication, profile management, and integrates with ChatGPT.
+- **Node.js Health Checker**: Monitors the health of a Node.js server and ensures communication between the Flask and Node.js servers.
+- **ChatGPT Integration**: Fetches responses from ChatGPT based on user input.
 
 ## Installation
 
-To set up and run the backend server, follow these steps:
+1. **Clone the Repository**:
+    ```bash
+    
+    cd chat_flask_fornt_backend
+    ```
 
-1. **Clone the repository:**
+2. **Set Up Virtual Environment**:
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+    ```
 
-   ```bash
-   git clone https://github.com/morgalut/chat_flask_fornt_backend.git
-   cd chat_flask_fornt_backend/backend
-   pip install -r requirements.txt
-   ```
+3. **Install Dependencies**:
+    ```bash
+    pip install -r requirements.txt
+    ```
 
+4. **Set Up Environment Variables**:
+    - Create a `.env` file in the `backend/ChatGPT` directory.
+    - Add the following variables:
+      ```
+      OPENAI_API_KEY=<your-openai-api-key>
+      API_URL=<your-chatgpt-api-url>
+      ```
 
-## Environment Variables
+## Configuration
 
-Ensure you have a `.env` file in the `backend` directory with the following variables:
+### Flask Configuration
 
-- `FLASK_APP`: Entry point of the Flask application, typically set to `run.py`.
-- `FLASK_ENV`: Defines the environment in which the Flask application runs. Set to `development` for development purposes.
-- `MONGO_URI`: The URI for connecting to your MongoDB instance. Default is `mongodb://localhost:27017/test`.
-- `JWT_SECRET_KEY`: Secret key for JWT authentication. Ensure this is a strong, unique key.
-- `UPLOAD_FOLDER`: Path to the folder where uploaded files will be stored.
-- `CHATGPT_API_KEY`: Your OpenAI API key for accessing ChatGPT services.
+- **Secret Key**: Set `SECRET_KEY` for securing the Flask application.
+- **JWT Configuration**: Set `JWT_SECRET_KEY` for JWT authentication.
+- **MongoDB URI**: Set `MONGO_URI` for MongoDB connection.
+
+### ChatGPT Configuration
+
+- **API Key and URL**: Configured via `.env` file.
 
 ## Running the Application
 
-To run the Flask application, follow these steps:
+1. **Start the Flask Server**:
+    ```bash
+    python backend/run.py
+    ```
 
-1. **Activate the virtual environment:**
+2. **Start the Node.js Server**:
+    Ensure the Node.js server is running. The command is defined in `backend/run.py`.
 
-   
+## Endpoints
 
-   ```bash
-      python -m virtualenv env
-      On Windows: env\Scripts\activate
-      pip install -r requirements.txt
-   ```
+### Authentication
 
-   # Run the Flask application:
+- **Register**: `POST /api/register`
+- **Login**: `POST /api/login`
 
-   ```bash
-   python run.py
-   ```
+### Profile
+
+- **Get Profile**: `GET /api/profile` (Requires JWT token)
+
+### ChatGPT
+
+- **Get Response**: `POST /chatgpt/get_response`
+
+## Health Check
+
+- **Health Check Endpoint**: `GET /health`
+
+## Development
+
+- **Code Style**: Follow PEP 8 guidelines.
+- **Testing**: Write tests for new features and bug fixes.
+
+## Troubleshooting
+
+- Ensure that environment variables are correctly set.
+- Verify MongoDB and Node.js server configurations.
+
+## License
+
+This project is licensed under the MIT License.
+
+## Contributing
+
+1. Fork the repository.
+2. Create a new branch.
+3. Make your changes and commit them.
+4. Open a pull request.
+
+---
+
+For any issues or questions, please contact the repository maintainer.
+### `auth/auth.py` (Continued)
+
+```python
+            chatgpt_message = fetch_chatgpt_response(user.username)
+            return jsonify({
+                'message': 'Login successful',
+                'token': token,
+                'chatgpt_message': chatgpt_message
+            }), 200
+
+        return jsonify({'message': 'Invalid username or password'}), 401
+
+    except Exception as e:
+        current_app.logger.error(f"Error in login route: {e}")
+        return jsonify({'message': 'Internal server error'}), 500

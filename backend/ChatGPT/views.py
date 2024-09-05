@@ -1,10 +1,24 @@
+"""
+This module defines the routes and functions for interacting with ChatGPT,
+including fetching a message and processing incoming requests.
+"""
+
 from flask import Blueprint, request, jsonify, current_app
-from .config import chatgpt_config
 import requests
+from .config import chatgpt_config
 
 chatgpt_bp = Blueprint('chatgpt', __name__)
 
 def fetch_message_from_chatgpt(name):
+    """
+    Fetches a message from ChatGPT using the provided name.
+
+    Args:
+        name (str): The name to include in the message request.
+
+    Returns:
+        str: The response message from ChatGPT or an error message.
+    """
     headers = {
         'Authorization': f'Bearer {chatgpt_config.api_key}',
         'Content-Type': 'application/json'
@@ -21,29 +35,34 @@ def fetch_message_from_chatgpt(name):
         return 'API URL is not configured.'
 
     try:
-        response = requests.post(chatgpt_config.api_url, headers=headers, json=payload)
+        response = requests.post(chatgpt_config.api_url, headers=headers, json=payload, timeout=10)
         if response.status_code == 200:
             data = response.json()
             return data['choices'][0]['message']['content'].strip()
-        elif response.status_code == 400:
+        if response.status_code == 400:
             return 'Failed to fetch message, status code: 400'
-        else:
-            return f'Failed to fetch message, status code: {response.status_code}'
+        return f'Failed to fetch message, status code: {response.status_code}'
     except Exception as e:
+        current_app.logger.error(f"Error occurred: {e}")
         return f'Error occurred: {e}'
-
 
 
 @chatgpt_bp.route('/get_response', methods=['POST'])
 def get_response():
+    """
+    Processes a POST request to get a response from ChatGPT.
+
+    Returns:
+        Response: JSON response containing the message or an error.
+    """
     data = request.json
     if 'name' in data:
         name = data['name']
         current_app.logger.info(f"Received request with name: {name}")
         message = fetch_message_from_chatgpt(name)
         current_app.logger.info(f"ChatGPT generated message: {message}")
-        response = f"{message}"
-        return jsonify({"message": response}), 200
-    else:
-        current_app.logger.error("Name not provided in the request")
-        return jsonify({"error": "Name not provided"}), 400
+        return jsonify({"message": message}), 200
+
+    current_app.logger.error("Name not provided in the request")
+    return jsonify({"error": "Name not provided"}), 400
+

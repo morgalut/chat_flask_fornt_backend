@@ -1,11 +1,24 @@
+// backend/auth/auth.js
+
+// Import required modules
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { User } = require('../models/User');
 const axios = require('axios');
+
+// Initialize Express router
 const router = express.Router();
 
+// Service class for authentication-related operations
 class AuthService {
+  /**
+   * Register a new user with hashed password
+   * @param {string} username - The username of the new user
+   * @param {string} email - The email of the new user
+   * @param {string} password - The plain text password
+   * @returns {Promise<User>} - The created user
+   */
   async registerUser(username, email, password) {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({ username, email, password: hashedPassword });
@@ -14,6 +27,12 @@ class AuthService {
     return user;
   }
 
+  /**
+   * Authenticate a user by comparing credentials
+   * @param {string} username - The username of the user
+   * @param {string} password - The plain text password
+   * @returns {Promise<User|null>} - The user if authentication is successful, otherwise null
+   */
   async authenticateUser(username, password) {
     const user = await User.findOne({ username });
     if (user && await bcrypt.compare(password, user.password)) {
@@ -23,6 +42,7 @@ class AuthService {
   }
 }
 
+// Route to handle user registration
 router.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
   const authService = new AuthService();
@@ -31,9 +51,11 @@ router.post('/register', async (req, res) => {
     const user = await authService.registerUser(username, email, password);
     
     try {
+      // Fetch ChatGPT response related to the user
       const chatgptResponse = await axios.post('http://localhost:5001/chatgpt/get_response', { name: user.username });
       const chatgptMessage = chatgptResponse.data.message || `Failed to fetch message, status code: ${chatgptResponse.status}`;
 
+      // Send response with user details and ChatGPT message
       res.status(201).json({
         message: 'User registered',
         user: user.username,
@@ -55,6 +77,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
+// Route to handle user login
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   const authService = new AuthService();
@@ -62,12 +85,15 @@ router.post('/login', async (req, res) => {
   try {
     const user = await authService.authenticateUser(username, password);
     if (user) {
+      // Generate JWT token for authenticated user
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
 
       try {
+        // Fetch ChatGPT response related to the user
         const chatgptResponse = await axios.post('http://localhost:5001/chatgpt/get_response', { name: user.username });
         const chatgptMessage = chatgptResponse.data.message || `Failed to fetch message, status code: ${chatgptResponse.status}`;
 
+        // Send response with JWT token and ChatGPT message
         res.status(200).json({
           message: 'Login successful',
           token,
@@ -92,4 +118,5 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Export the router
 module.exports = router;

@@ -1,17 +1,26 @@
+// backend/ChatGBT/views.js
+
+// Import required modules
 const express = require('express');
 const { OpenAI } = require('openai');
 const chatgptConfig = require('./config');
 
+// Initialize Express router
 const router = express.Router();
 
-// Initialize OpenAI client
+// Initialize OpenAI client with API key
 const openai = new OpenAI({
   apiKey: chatgptConfig.apiKey
 });
 
-// Function to fetch message from ChatGPT
+/**
+ * Function to fetch a message from ChatGPT
+ * @param {string} name - The name to include in the message
+ * @returns {Promise<string>} - The response message from ChatGPT
+ */
 async function fetchMessageFromChatGPT(name) {
   try {
+    // Request completion from OpenAI ChatGPT
     const response = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
@@ -20,16 +29,18 @@ async function fetchMessageFromChatGPT(name) {
       max_tokens: 50
     });
 
-    // Get the message from the response
+    // Extract and trim the message from the response
     const message = response.choices[0].message.content.trim();
     return message;
 
   } catch (error) {
+    // Log error message and return error response
     console.error(`Error occurred: ${error.message}`);
     return `Error occurred: ${error.message}`;
   }
 }
 
+// Route to handle POST request and get response from ChatGPT
 router.post('/get_response', async (req, res) => {
   const { name } = req.body;
 
@@ -44,5 +55,5 @@ router.post('/get_response', async (req, res) => {
   }
 });
 
-
+// Export the router
 module.exports = router;

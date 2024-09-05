@@ -1,4 +1,9 @@
-import os
+"""
+Main entry point for the Flask backend server.
+Initializes the Flask app, configures extensions, and sets up health checks.
+"""
+
+import os  # Remove this line if not used
 from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
@@ -9,11 +14,18 @@ from models.extensions import mongo
 from ChatGPT.views import chatgpt_bp
 from health_check import NodeJsHealthChecker
 
+
 def create_app():
+    """
+    Creates and configures the Flask application.
+    
+    Returns:
+        Flask app: Configured Flask application.
+    """
     app = Flask(__name__)
     app.config.from_object(Config)
     mongo.init_app(app)
-    jwt = JWTManager(app)
+    jwt_manager = JWTManager(app)  # Renamed to avoid redefining 'app'
     CORS(app, resources={r"/*": {"origins": "*"}})
     app.register_blueprint(auth_bp, url_prefix='/api')
     app.register_blueprint(profile_bp, url_prefix='/api')
@@ -21,15 +33,23 @@ def create_app():
 
     @app.route('/health', methods=['GET'])
     def health_check():
+        """Endpoint to check the health of the application."""
         return jsonify({'status': 'healthy'}), 200
 
     return app
 
+
 app = create_app()
 
-node_server_command = 'node C:\\Users\\Mor\\Desktop\\CBS\\chat_flask_fornt_backend\\chat_flask_fornt_backend\\project-root\\backend\\app.js'
+NODE_SERVER_COMMAND = (
+    'node chat_flask_fornt_backend\\chat_flask_fornt_backend\\project-root\\backend\\app.js'
+)
 
-health_checker = NodeJsHealthChecker(notify_url='http://localhost:5001/notify_alive', check_interval=120, node_server_command=node_server_command)
+health_checker = NodeJsHealthChecker(
+    notify_url='http://localhost:5001/notify_alive',
+    check_interval=120,
+    node_server_command=NODE_SERVER_COMMAND
+)
 health_checker.start()
 
 if __name__ == '__main__':
