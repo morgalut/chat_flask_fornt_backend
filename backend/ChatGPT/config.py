@@ -27,5 +27,5 @@ class ChatGPTConfig:
         print(f"API URL: {self.api_url}")
 
 # Load the config using the absolute path to the .env file
-CONFIG_FILE_PATH = 'chat_flask_fornt_backend/backend/ChatGPT/.env'
+CONFIG_FILE_PATH = 'C:\\Users\\Mor\\Desktop\\hello\\chat_flask_fornt_backend\\backend\\ChatGPT\\.env'
 chatgpt_config = ChatGPTConfig(CONFIG_FILE_PATH)
