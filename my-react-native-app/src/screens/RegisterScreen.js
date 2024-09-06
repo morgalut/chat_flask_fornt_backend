@@ -76,19 +76,21 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: 'center',
+    backgroundColor: '#f8f8f8', // Softer background color
   },
   header: {
-    fontSize: 24,
+    fontSize: 28,
     marginBottom: 20,
     textAlign: 'center',
+    color: '#333', // Darker header text
   },
   input: {
-    height: 40,
+    height: 50,
     borderColor: '#ddd',
     borderWidth: 1,
-    marginBottom: 10,
-    paddingHorizontal: 8,
-    borderRadius: 5,
+    marginBottom: 15,
+    paddingHorizontal: 12,
+    borderRadius: 8,
   },
   message: {
     color: 'green',
@@ -101,5 +103,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
 
 export default RegisterScreen;

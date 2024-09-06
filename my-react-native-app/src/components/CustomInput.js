@@ -1,10 +1,6 @@
 // src/components/CustomInput.js
-
 import React from 'react';
-import { TextInput, StyleSheet, Dimensions } from 'react-native';
-
-// Get screen dimensions
-const { width } = Dimensions.get('window');
+import { TextInput, StyleSheet } from 'react-native';
 
 const CustomInput = ({ placeholder, value, onChangeText, secureTextEntry }) => {
   return (
@@ -19,15 +15,17 @@ const CustomInput = ({ placeholder, value, onChangeText, secureTextEntry }) => {
 };
 
 const styles = StyleSheet.create({
-  input: {
-    width: width * 0.8, // 80% of the screen width
-    padding: 12, // Slightly increased padding for better spacing
-    marginVertical: 8, // Increased margin for better spacing between elements
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    fontSize: 16, // Increased font size for better readability
-  },
-});
+    input: {
+      width: '80%',
+      height: 50,
+      paddingHorizontal: 16,
+      borderWidth: 1,
+      borderColor: '#ddd',
+      borderRadius: 8,
+      fontSize: 16,
+      marginVertical: 8,
+    },
+  });
+  
 
 export default CustomInput;

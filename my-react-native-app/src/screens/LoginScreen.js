@@ -43,6 +43,7 @@ const LoginScreen = ({ navigation }) => {
         placeholder="Username"
         value={username}
         onChangeText={setUsername}
+        autoCapitalize="none"
       />
       <TextInput
         style={styles.input}
@@ -50,8 +51,9 @@ const LoginScreen = ({ navigation }) => {
         value={password}
         onChangeText={setPassword}
         secureTextEntry
+        autoCapitalize="none"
       />
-      <Button title="Login" onPress={handleSubmit} />
+      <Button title="Login" onPress={handleSubmit} color="#007BFF" />
       {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
     </View>
   );
@@ -61,23 +63,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    padding: 16,
+    paddingHorizontal: 24,
+    backgroundColor: '#ffffff',
   },
   title: {
-    fontSize: 24,
-    marginBottom: 20,
+    fontSize: 32,
+    marginBottom: 24,
     textAlign: 'center',
+    color: '#333333',
   },
   input: {
-    height: 40,
-    borderColor: '#ccc',
+    height: 48,
+    borderColor: '#cccccc',
     borderWidth: 1,
-    marginBottom: 12,
-    paddingHorizontal: 8,
+    marginBottom: 16,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    fontSize: 16,
   },
   error: {
     color: 'red',
-    marginTop: 10,
+    marginTop: 12,
+    textAlign: 'center',
+    fontSize: 16,
   },
 });
 

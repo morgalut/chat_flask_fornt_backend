@@ -82,27 +82,32 @@ const ProfileScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'center',
-  },
-  header: {
-    fontSize: 24,
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  info: {
-    fontSize: 18,
-    marginBottom: 10,
-  },
-  label: {
-    fontWeight: 'bold',
-  },
-  error: {
-    color: 'red',
-    marginBottom: 20,
-  },
-});
+    container: {
+      flex: 1,
+      padding: 20,
+      backgroundColor: '#f5f5f5', // Light gray background
+    },
+    header: {
+      fontSize: 28,
+      marginBottom: 20,
+      textAlign: 'center',
+      color: '#333', // Darker color for the header
+    },
+    info: {
+      fontSize: 20,
+      marginBottom: 10,
+      color: '#444', // Slightly lighter color for the info text
+    },
+    label: {
+      fontWeight: 'bold',
+      color: '#333',
+    },
+    error: {
+      color: 'red',
+      marginBottom: 20,
+      textAlign: 'center',
+    },
+  });
+  
 
 export default ProfileScreen;

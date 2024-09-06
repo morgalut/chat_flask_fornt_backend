@@ -9,12 +9,12 @@ from .config import chatgpt_config
 
 chatgpt_bp = Blueprint('chatgpt', __name__)
 
-def fetch_message_from_chatgpt(name):
+def fetch_chatgpt_response(username):
     """
     Fetches a message from ChatGPT using the provided name.
 
     Args:
-        name (str): The name to include in the message request.
+        username (str): The name to include in the message request.
 
     Returns:
         str: The response message from ChatGPT or an error message.
@@ -26,7 +26,7 @@ def fetch_message_from_chatgpt(name):
     payload = {
         "model": "gpt-3.5-turbo",
         "messages": [
-            {"role": "user", "content": f"Give me something random: {name}"}
+            {"role": "user", "content": f"Give me something random: {username}"}
         ],
         "max_tokens": 50
     }
@@ -35,16 +35,23 @@ def fetch_message_from_chatgpt(name):
         return 'API URL is not configured.'
 
     try:
+        # Correct the URL to call the OpenAI API directly
         response = requests.post(chatgpt_config.api_url, headers=headers, json=payload, timeout=10)
-        if response.status_code == 200:
-            data = response.json()
-            return data['choices'][0]['message']['content'].strip()
-        if response.status_code == 400:
-            return 'Failed to fetch message, status code: 400'
-        return f'Failed to fetch message, status code: {response.status_code}'
-    except Exception as e:
-        current_app.logger.error(f"Error occurred: {e}")
-        return f'Error occurred: {e}'
+        response.raise_for_status()
+        chatgpt_response = response.json()
+        return chatgpt_response.get('choices', [{}])[0].get('message', {}).get('content', "No message received.")
+    except requests.exceptions.HTTPError as e:
+        if response.status_code == 401:
+            current_app.logger.error("Unauthorized access to ChatGPT API. Check your authentication.")
+            return "Unauthorized access to ChatGPT API."
+        current_app.logger.error(f"HTTP error fetching ChatGPT response: {e}")
+        return f"HTTP error fetching ChatGPT response: {e}"
+    except requests.exceptions.RequestException as e:
+        current_app.logger.error(f"Error fetching ChatGPT response: {e}")
+        return f"Error fetching ChatGPT response: {e}"
+    except ValueError as e:
+        current_app.logger.error(f"Error parsing ChatGPT response: {e}")
+        return f"Error parsing ChatGPT response: {e}"
 
 
 @chatgpt_bp.route('/get_response', methods=['POST'])
@@ -59,10 +66,12 @@ def get_response():
     if 'name' in data:
         name = data['name']
         current_app.logger.info(f"Received request with name: {name}")
-        message = fetch_message_from_chatgpt(name)
+        
+        # Use the correct function name here
+        message = fetch_chatgpt_response(name)
+        
         current_app.logger.info(f"ChatGPT generated message: {message}")
         return jsonify({"message": message}), 200
 
     current_app.logger.error("Name not provided in the request")
     return jsonify({"error": "Name not provided"}), 400
-

@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Navigate } from 'react-router-dom';
+import '../style/LogIn.css'; // Correct path to LogIn.css
+import '../style/Input.css'; // Correct path to Input.css
+import '../style/Button.css'; // Correct path to Button.css
 
-const API_URL = 'http://localhost:5000/api/login'; // Updated to include '/api/login'
-const BACKUP_API_URL = 'http://localhost:5001/auth/login'; // Updated to include '/api/login'
+
+const API_URL = 'http://localhost:5000/api/login';
+const BACKUP_API_URL = 'http://localhost:5001/auth/login';
 
 const LoginComp = () => {
   const [username, setUsername] = useState('');
@@ -22,7 +26,7 @@ const LoginComp = () => {
         setIsLoggedIn(true);
         setChatgptMessage(response.data.chatgpt_message);
       } catch (error) {
-        throw error; // Rethrow error to be caught by higher-level handler
+        throw error; 
       }
     };
   
@@ -44,8 +48,8 @@ const LoginComp = () => {
   }
 
   return (
-    <div>
-      <h1>Login Page</h1>
+    <div className="login-container">
+      <h1 className="login">Login Page</h1>
       <form onSubmit={handleSubmit}>
         <input 
           type="text" 
@@ -53,6 +57,7 @@ const LoginComp = () => {
           onChange={(e) => setUsername(e.target.value)} 
           placeholder="Username" 
           required
+          className="input" // Apply the input CSS class
         />
         <input 
           type="password" 
@@ -60,8 +65,9 @@ const LoginComp = () => {
           onChange={(e) => setPassword(e.target.value)} 
           placeholder="Password" 
           required
+          className="input" // Apply the input CSS class
         />
-        <button type="submit">Login</button>
+        <button type="submit" className="button">Login</button> {/* Apply the button CSS class */}
       </form>
       <p>Please log in.</p>
       {chatgptMessage && <p>{chatgptMessage}</p>}

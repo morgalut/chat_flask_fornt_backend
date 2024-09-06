@@ -1,16 +1,12 @@
-// backend/ChatGBT/views.js
-
 // Import required modules
 const express = require('express');
-const { OpenAI } = require('openai');
+const { OpenAI } = require('openai'); // Updated import based on the latest documentation
 const chatgptConfig = require('./config');
-
-// Initialize Express router
 const router = express.Router();
 
 // Initialize OpenAI client with API key
 const openai = new OpenAI({
-  apiKey: chatgptConfig.apiKey
+  apiKey: chatgptConfig.apiKey,
 });
 
 /**
@@ -20,25 +16,27 @@ const openai = new OpenAI({
  */
 async function fetchMessageFromChatGPT(name) {
   try {
-    // Request completion from OpenAI ChatGPT
     const response = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
+      model: 'gpt-3.5-turbo', // or the correct model you have access to
       messages: [
         { role: 'user', content: `Give me something random: ${name}` }
       ],
       max_tokens: 50
     });
 
-    // Extract and trim the message from the response
     const message = response.choices[0].message.content.trim();
     return message;
 
   } catch (error) {
-    // Log error message and return error response
-    console.error(`Error occurred: ${error.message}`);
-    return `Error occurred: ${error.message}`;
+    if (error.response && error.response.status === 401) {
+      console.error("Unauthorized access to ChatGPT API. Check your API key and authentication.");
+      return "Unauthorized access to ChatGPT API.";
+    }
+    console.error(`Error fetching ChatGPT response: ${error.message}`);
+    return `Error fetching ChatGPT response: ${error.message}`;
   }
 }
+
 
 // Route to handle POST request and get response from ChatGPT
 router.post('/get_response', async (req, res) => {

@@ -21,23 +21,25 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f8f8f8',
-    padding: 20,
+    backgroundColor: '#ffffff',
+    padding: 16,
   },
   header: {
-    fontSize: 28,
+    fontSize: 32,
     marginBottom: 20,
     fontWeight: 'bold',
+    color: '#333333',
   },
   image: {
-    width: 300,
-    height: 300,
+    width: '100%',
+    height: 250,
     borderRadius: 15,
     marginBottom: 20,
   },
   description: {
-    fontSize: 16,
+    fontSize: 18,
     textAlign: 'center',
+    color: '#666666',
   },
 });
 

@@ -1,10 +1,11 @@
-// ProfileComp.js
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import '../style/Button.css'; // Ensure this path is correct
+import '../style/Profile.css'; // Ensure this path is correct
 
-const API_URL = "http://localhost:5000"; // Flask API
-const BACKUP_API_URL = "http://localhost:5001"; // Node.js backup API
+const API_URL = "http://localhost:5000";
+const BACKUP_API_URL = "http://localhost:5001";
 
 const ProfileComp = () => {
   const [userProfile, setUserProfile] = useState(null);
@@ -26,7 +27,6 @@ const ProfileComp = () => {
       }
 
       try {
-        // Fetch from Flask API
         const response = await axios.get(`${API_URL}/api/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -39,7 +39,6 @@ const ProfileComp = () => {
           "Failed to fetch profile data from Flask API, trying backup server..."
         );
 
-        // Fetch from Node.js backup API
         try {
           const backupResponse = await axios.get(
             `${BACKUP_API_URL}/profile/profile`,
@@ -64,9 +63,9 @@ const ProfileComp = () => {
   }, []);
 
   return (
-    <div>
+    <div className="profile-container">
       <h2>Profile Page</h2>
-      {error && <p>{error}</p>}
+      {error && <p className="error">{error}</p>}
       {userProfile ? (
         <div>
           <p>
@@ -79,7 +78,7 @@ const ProfileComp = () => {
             <strong>Status:</strong> {userProfile.status}
           </p>
           {chatgptMessage && (
-            <p>
+            <p className="chatgpt-message">
               <strong>ChatGPT Message:</strong> {chatgptMessage}
             </p>
           )}
@@ -87,7 +86,7 @@ const ProfileComp = () => {
       ) : (
         <p>Loading...</p>
       )}
-      <button onClick={handleLogout}>Logout</button>
+      <button onClick={handleLogout} className="button">Logout</button>
     </div>
   );
 };

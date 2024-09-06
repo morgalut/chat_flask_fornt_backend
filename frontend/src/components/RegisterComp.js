@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import '../style/Input.css'; // Ensure this path is correct
+import '../style/Button.css'; // Ensure this path is correct
+import '../style/Register.css'; // Ensure this path is correct
 
 const API_URL = 'http://localhost:5000/api/register';
 const BACKUP_API_URL = 'http://localhost:5001/auth/register';
@@ -42,7 +45,7 @@ const RegisterComp = () => {
   };
 
   return (
-    <div>
+    <div className="register-container">
       <h2>Register</h2>
       <form onSubmit={onSubmit}>
         <div>
@@ -53,6 +56,7 @@ const RegisterComp = () => {
             value={username}
             onChange={onChange}
             required
+            className="input" // Apply the input CSS class
           />
         </div>
         <div>
@@ -63,6 +67,7 @@ const RegisterComp = () => {
             value={email}
             onChange={onChange}
             required
+            className="input" // Apply the input CSS class
           />
         </div>
         <div>
@@ -74,12 +79,13 @@ const RegisterComp = () => {
             onChange={onChange}
             minLength="6"
             required
+            className="input" // Apply the input CSS class
           />
         </div>
-        <input type="submit" value="Register" />
+        <input type="submit" value="Register" className="button" /> {/* Apply the button CSS class */}
       </form>
-      {chatgptMessage && <p>{chatgptMessage}</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {chatgptMessage && <p className="success">{chatgptMessage}</p>}
+      {error && <p className="error">{error}</p>}
     </div>
   );
 };
